@@ -21,18 +21,8 @@ def download_cover(url, path)
   path
 end
 
-def get_release(artist, album_name)
-  albums = LFM.find_albums(album_name)
-  albums.each do |album|
-    if album.name.downcase == album_name.downcase && album.artist.downcase == artist.downcase
-      return album
-    end
-  end
-  return nil
-end
-
 def get_cover(album, tmp)
-  url = album.images['extralarge']
+  url = album.large_image
   uri = URI.parse(url)
 
   name = File.join(tmp, File.basename(uri.path))
@@ -61,7 +51,7 @@ def process_file(path, tmp)
     artist = fields['ARTIST'][0]
     album = fields['ALBUM'][0]
 
-    release = get_release(artist, album)
+    release = LFM.get_album(artist, album)
     if release.nil?
       puts "ERROR: release not found for #{path}"
       return
